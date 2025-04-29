@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { Menu, Theme } from "@/types";
-import { getPublicMenu, getThemeById } from "@/services/menuService";
+import { getPublicMenu, getThemeById } from "../services/menuService";
 import { toast } from "sonner";
 
 const PublicMenu = () => {
