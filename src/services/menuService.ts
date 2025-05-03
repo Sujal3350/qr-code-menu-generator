@@ -1,4 +1,3 @@
-
 import { Menu, MenuItem, MenuCategory, Theme } from "@/types";
 import { toast } from "sonner";
 import { getCurrentUser } from "./auth";
@@ -134,14 +133,15 @@ export const createMenu = async (
   const menus = initializeMenus();
   const menuId = Date.now().toString();
   const menuUrl = `${window.location.origin}/menu/${menuId}`;
-  
+  const qrCodeUrl = generateQRCode(menuUrl);
+
   const newMenu: Menu = {
     id: menuId,
     userId: user.id,
     businessName,
     logo,
     themeId,
-    qrCodeUrl: generateQRCode(menuUrl),
+    qrCodeUrl,
     menuUrl,
     categories,
     items,
@@ -149,6 +149,20 @@ export const createMenu = async (
     updatedAt: new Date().toISOString(),
   };
   
+  // Save the QR code to the backend
+  try {
+    await fetch("http://localhost:5000/api/qr-codes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ menuId, qrCodeUrl }),
+    });
+  } catch (error) {
+    console.error("Failed to save QR code to the backend:", error);
+    throw new Error("Failed to save QR code");
+  }
+
   menus.push(newMenu);
   saveMenus(menus);
   
